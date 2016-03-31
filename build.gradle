@@ -1,4 +1,4 @@
-group 'com.feexon'
+group 'com.selonj'
 version '1.0'
 
 apply plugin: 'java'
