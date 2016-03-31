@@ -1,4 +1,4 @@
-# Gson Enclsoing Type Adapter Factory Plugin
+# Gson Enclosing Type Adapter Factory Plugin
 
 **gson-enclosing-plugin**是一款基于**gson**提取嵌套json对象的插件。
 
