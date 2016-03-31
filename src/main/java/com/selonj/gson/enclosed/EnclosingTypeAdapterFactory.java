@@ -71,14 +71,12 @@ public class EnclosingTypeAdapterFactory implements TypeAdapterFactory, com.selo
 
 
     private class EnclosingTypeAdapter<T> extends TypeAdapter<T> {
-        private final Gson gson;
         private final TypeToken<T> type;
-        private TypeAdapterFactory skippedFactory;
+        private TypeAdapter<T> kernel;
 
         public EnclosingTypeAdapter(Gson gson, TypeToken<T> type, TypeAdapterFactory skippedFactory) {
-            this.gson = gson;
             this.type = type;
-            this.skippedFactory = skippedFactory;
+            kernel = gson.getDelegateAdapter(skippedFactory, type);
         }
 
         @Override
@@ -105,7 +103,7 @@ public class EnclosingTypeAdapterFactory implements TypeAdapterFactory, com.selo
                 }
                 out.endArray();
             } else {
-                kernel().write(out, value);
+                kernel.write(out, value);
             }
         }
 
@@ -168,15 +166,11 @@ public class EnclosingTypeAdapterFactory implements TypeAdapterFactory, com.selo
         }
 
         private T parseEnclosingObject(JsonReader in) throws IOException {
-            return kernel().read(in);
+            return kernel.read(in);
         }
 
-        private TypeAdapter<T> kernel() {
-            return gson.getDelegateAdapter(skippedFactory, type);
-        }
-
-        private List parseGroupOfEnclosingObject(JsonReader in) throws IOException {
-            List group = new ArrayList();
+        private List<T> parseGroupOfEnclosingObject(JsonReader in) throws IOException {
+            List<T> group = new ArrayList<>();
             in.beginArray();
             while (in.hasNext()) {
                 group.add(extractEnclosedObject(in));
