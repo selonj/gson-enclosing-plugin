@@ -1,6 +1,7 @@
 package com.selonj.gson.enclosed;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.TypeAdapter;
 import com.google.gson.TypeAdapterFactory;
 import com.google.gson.reflect.TypeToken;
@@ -15,7 +16,7 @@ import java.util.List;
 /**
  * Created by Administrator on 2016-03-31.
  */
-public class EnclosingTypeAdapterFactory implements TypeAdapterFactory {
+public class EnclosingTypeAdapterFactory implements TypeAdapterFactory, com.selonj.gson.enclosed.dsl.GsonClause {
     private static final String DEFAULT_ENCLOSED_DATA_NAME = new String("data");
 
     private Class enclosedType;
@@ -56,6 +57,16 @@ public class EnclosingTypeAdapterFactory implements TypeAdapterFactory {
 
     private boolean isArray(Class type) {
         return Collection.class.isAssignableFrom(type);
+    }
+
+    @Override
+    public Gson slight() {
+        return to(new GsonBuilder()).create();
+    }
+
+    @Override
+    public GsonBuilder to(GsonBuilder target) {
+        return target.registerTypeAdapterFactory(this);
     }
 
 

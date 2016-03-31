@@ -1,7 +1,6 @@
 package exmaples;
 
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.selonj.gson.enclosed.dsl.Enclosing;
 import com.selonj.gson.enclosed.User;
 import org.junit.Before;
@@ -22,7 +21,7 @@ public class EnclosingExample {
 
     @Before
     public void registerEnclosingAdapter() throws Exception {
-        gson = new GsonBuilder().registerTypeAdapterFactory(Enclosing.with(User.class).on("user")).create();
+        gson = Enclosing.with(User.class).on("user").slight();
     }
 
     @Test

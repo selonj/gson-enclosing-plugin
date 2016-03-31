@@ -1,6 +1,5 @@
 package com.selonj.gson.enclosed.dsl;
 
-import com.google.gson.TypeAdapterFactory;
 import com.selonj.gson.enclosed.EnclosingTypeAdapterFactory;
 
 /**
@@ -11,7 +10,7 @@ public class Enclosing {
         final EnclosingTypeAdapterFactory factory = createFactoryEnclosing(enclosingType);
         return new EnclosingClause() {
             @Override
-            public TypeAdapterFactory on(String property) {
+            public GsonClause on(String property) {
                 factory.setEnclosingName(property);
                 return factory;
             }
