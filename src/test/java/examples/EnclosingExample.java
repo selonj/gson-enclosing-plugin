@@ -1,4 +1,4 @@
-package exmaples;
+package examples;
 
 import com.google.gson.Gson;
 import com.selonj.gson.enclosed.dsl.Enclosing;
