@@ -71,7 +71,7 @@ public class EnclosingTypeAdapterFactory implements TypeAdapterFactory, com.selo
 
 
     private class EnclosingTypeAdapter<T> extends TypeAdapter<T> {
-        private final TypeToken<T> type;
+        private TypeToken<T> type;
         private TypeAdapter<T> kernel;
 
         public EnclosingTypeAdapter(Gson gson, TypeToken<T> type, TypeAdapterFactory skippedFactory) {
@@ -120,8 +120,8 @@ public class EnclosingTypeAdapterFactory implements TypeAdapterFactory, com.selo
                     return fetch(in);
                 default:
                     skip(in);
+                    return null;
             }
-            return null;
         }
 
         private T expand(JsonReader in) throws IOException {
