@@ -69,6 +69,11 @@ public class EnclosingTypeAdapterFactory implements TypeAdapterFactory, com.selo
         return target.registerTypeAdapterFactory(this);
     }
 
+    @Override
+    public TypeAdapterFactory bare() {
+        return this;
+    }
+
 
     private class EnclosingTypeAdapter<T> extends TypeAdapter<T> {
         private TypeToken<T> type;
