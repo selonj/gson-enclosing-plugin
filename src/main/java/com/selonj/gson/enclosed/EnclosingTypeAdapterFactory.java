@@ -38,20 +38,20 @@ public class EnclosingTypeAdapterFactory implements TypeAdapterFactory, com.selo
 
     @Override
     public <T> TypeAdapter<T> create(Gson gson, TypeToken<T> type) {
-        allowToUse();
-        if (supports(type.getRawType())) {
+        checkingIfReady();
+        if (isEnclosingWith(type.getRawType())) {
             return new EnclosingTypeAdapter<>(gson, TypeToken.get(enclosedType), this);
         }
         return null;
     }
 
-    private void allowToUse() {
+    private void checkingIfReady() {
         if (enclosedType == null) {
             throw new IllegalStateException("You have not been configure enclosing adapter!");
         }
     }
 
-    private <T> boolean supports(Class type) {
+    private <T> boolean isEnclosingWith(Class type) {
         return enclosedType.equals(type) || isArray(type);
     }
 
@@ -86,10 +86,14 @@ public class EnclosingTypeAdapterFactory implements TypeAdapterFactory, com.selo
             if (value == null) {
                 return;
             }
+            startingEnclosing(out);
+            stringify(value, out);
+            endingEnclosing(out);
+        }
+
+        private void startingEnclosing(JsonWriter out) throws IOException {
             out.beginObject();
             out.name(enclosedName);
-            stringify(value, out);
-            out.endObject();
         }
 
         private void stringify(T value, JsonWriter out) throws IOException {
@@ -101,52 +105,73 @@ public class EnclosingTypeAdapterFactory implements TypeAdapterFactory, com.selo
                 }
                 out.endArray();
             } else {
-                secondaryAdapter().write(out, value);
+                kernel().write(out, value);
             }
+        }
+
+        private void endingEnclosing(JsonWriter out) throws IOException {
+            out.endObject();
         }
 
         @Override
         public T read(JsonReader in) throws IOException {
-            T result = null;
             switch (in.peek()) {
                 case BEGIN_OBJECT:
-                    in.beginObject();
-                    result = read(in);
-                    in.endObject();
-                    break;
+                    return expand(in);
                 case NAME:
-                    String name = in.nextName();
-                    if (name.equals(enclosedName)) {
-                        result = extractEnclosedDataFrom(in);
-                        skipRestOfTokens(in);
-                    } else {
-                        result = read(in);
-                    }
-                    break;
+                    return fetch(in);
                 default:
-                    if (in.hasNext()) {
-                        in.skipValue();
-                    }
+                    skip(in);
             }
+            return null;
+        }
+
+        private T expand(JsonReader in) throws IOException {
+            in.beginObject();
+            T result = read(in);
+            in.endObject();
             return result;
         }
 
-        private T extractEnclosedDataFrom(JsonReader in) throws IOException {
+        private T fetch(JsonReader in) throws IOException {
+            String name = in.nextName();
+            if (name.equals(enclosedName)) {
+                T result = extractEnclosedObject(in);
+                skipRestOfTokens(in);
+                return result;
+            } else {
+                return read(in);
+            }
+        }
+
+        private void skipRestOfTokens(JsonReader in) throws IOException {
+            while (skip(in)) ;
+        }
+
+        private boolean skip(JsonReader in) throws IOException {
+            if (in.hasNext()) {
+                in.skipValue();
+                return true;
+            }
+            return false;
+        }
+
+        private T extractEnclosedObject(JsonReader in) throws IOException {
             switch (in.peek()) {
                 case BEGIN_OBJECT:
                     return parseEnclosingObject(in);
                 case BEGIN_ARRAY:
                     return (T) parseGroupOfEnclosingObject(in);
                 default:
-                    throw new IllegalArgumentException("bad enclosing json `data` for <" + type.toString() + "> !");
+                    throw new IllegalArgumentException("Bad enclosing json `data` for <" + type.toString() + "> !");
             }
         }
 
         private T parseEnclosingObject(JsonReader in) throws IOException {
-            return secondaryAdapter().read(in);
+            return kernel().read(in);
         }
 
-        private TypeAdapter<T> secondaryAdapter() {
+        private TypeAdapter<T> kernel() {
             return gson.getDelegateAdapter(skippedFactory, type);
         }
 
@@ -154,15 +179,10 @@ public class EnclosingTypeAdapterFactory implements TypeAdapterFactory, com.selo
             List group = new ArrayList();
             in.beginArray();
             while (in.hasNext()) {
-                group.add(extractEnclosedDataFrom(in));
+                group.add(extractEnclosedObject(in));
             }
             in.endArray();
             return group;
-        }
-
-        private void skipRestOfTokens(JsonReader in) throws IOException {
-            while (in.hasNext())
-                in.skipValue();
         }
     }
 
