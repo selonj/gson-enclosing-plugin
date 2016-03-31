@@ -13,6 +13,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import static java.lang.String.format;
+
 /**
  * Created by Administrator on 2016-03-31.
  */
@@ -166,7 +168,7 @@ public class EnclosingTypeAdapterFactory implements TypeAdapterFactory, com.selo
                 case BEGIN_ARRAY:
                     return (T) parseGroupOfEnclosingObject(in);
                 default:
-                    throw new IllegalArgumentException("Bad enclosing json `data` for <" + type.toString() + "> !");
+                    throw new IllegalArgumentException(format("Bad enclosing json `%s` for <%s> !", enclosedName, type.toString()));
             }
         }
 
