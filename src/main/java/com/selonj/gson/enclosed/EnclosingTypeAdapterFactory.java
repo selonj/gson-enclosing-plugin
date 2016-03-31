@@ -168,8 +168,12 @@ public class EnclosingTypeAdapterFactory implements TypeAdapterFactory, com.selo
                 case BEGIN_ARRAY:
                     return (T) parseGroupOfEnclosingObject(in);
                 default:
-                    throw new IllegalArgumentException(format("Bad enclosing json `%s` for <%s> !", enclosedName, type.toString()));
+                    throw mismatchEnclosingTypeException();
             }
+        }
+
+        private IllegalArgumentException mismatchEnclosingTypeException() {
+            return new IllegalArgumentException(format("Bad enclosing json `%s` for <%s> !", enclosedName, type.toString()));
         }
 
         private T parseEnclosingObject(JsonReader in) throws IOException {
