@@ -22,12 +22,12 @@ Gson gson=Enclosing.with(User.class).on("user").slight()
 
 - 将EnclosingTypeAdapterFactory注册到GsonBuilder上。
 ```java
-Gson gson=Enclosing.with(User.class).on("user").to(aGsonBuilder)
+GsonBuilder aGsonBuilder=Enclosing.with(User.class).on("user").to(aGsonBuilder)
 ```
 
 - 获取EnclosingTypeAdapterFactory对象。
 ```java
-Gson gson=Enclosing.with(User.class).on("user").bare()
+TypeAdapterFactory factory=Enclosing.with(User.class).on("user").bare()
 ```
 
 
