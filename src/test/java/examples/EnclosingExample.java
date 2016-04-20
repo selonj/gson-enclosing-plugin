@@ -19,21 +19,18 @@ import static org.junit.Assert.assertThat;
 public class EnclosingExample {
     private Gson gson;
 
-    @Before
-    public void registerEnclosingAdapter() throws Exception {
+    @Before public void registerEnclosingAdapter() throws Exception {
         gson = Enclosing.with(User.class).on("user").slight();
     }
 
-    @Test
-    public void extractEnclosedObjectFromJson() throws Exception {
+    @Test public void extractEnclosedObjectFromJson() throws Exception {
         User user = gson.fromJson("{user:{name:'zhangsan',mail:'zhangsan@163.com'}}", User.class);
 
         assertThat(user.name, equalTo("zhangsan"));
         assertThat(user.mail, equalTo("zhangsan@163.com"));
     }
 
-    @Test
-    public void extractGroupOfEnclosedObjectsFromJson() throws Exception {
+    @Test public void extractGroupOfEnclosedObjectsFromJson() throws Exception {
         List<User> users = gson.fromJson("{user:[{name:'zhangsan'},{name:'lisi'}]}", List.class);
 
         assertThat(users, hasSize(2));
@@ -41,14 +38,12 @@ public class EnclosingExample {
         assertThat(users.get(1).name, equalTo("lisi"));
     }
 
-    @Test
-    public void stringifyEnclosedObject() throws Exception {
+    @Test public void stringifyEnclosedObject() throws Exception {
         String json = gson.toJson(new User("zhangsan", "zhangsan@163.com"), User.class);
         assertThat(json, equalTo("{\"user\":{\"name\":\"zhangsan\",\"mail\":\"zhangsan@163.com\"}}"));
     }
 
-    @Test
-    public void stringifyGroupOfEnclosedObjects() throws Exception {
+    @Test public void stringifyGroupOfEnclosedObjects() throws Exception {
         String json = gson.toJson(Arrays.asList(new User("zhangsan"), new User("lisi")), List.class);
         assertThat(json, equalTo("{\"user\":[{\"name\":\"zhangsan\"},{\"name\":\"lisi\"}]}"));
     }

@@ -23,8 +23,7 @@ public class EnclosingTypeAdapterFactoryConstraintsTest {
     private EnclosingTypeAdapterFactory factory = new EnclosingTypeAdapterFactory();
 
 
-    @Test
-    public void cannotUseWhenHasNotConfigured() throws Exception {
+    @Test public void cannotUseWhenHasNotConfigured() throws Exception {
         try {
             factory.create(UNUSED_GSON, UNUSED_TYPE);
             fail("should failed");
@@ -32,8 +31,7 @@ public class EnclosingTypeAdapterFactoryConstraintsTest {
         }
     }
 
-    @Test
-    public void cannotWithNullEnclosingType() throws Exception {
+    @Test public void cannotWithNullEnclosingType() throws Exception {
         try {
             factory.setEnclosingType(null);
             fail("should failed");
@@ -41,8 +39,7 @@ public class EnclosingTypeAdapterFactoryConstraintsTest {
         }
     }
 
-    @Test
-    public void cannotWithNullEnclosingName() throws Exception {
+    @Test public void cannotWithNullEnclosingName() throws Exception {
         try {
             factory.setEnclosingName(null);
             fail("should failed");
